@@ -39,6 +39,18 @@ jobs:
         fi
 
         cd myapp
+        
+        # Look for custom logo/icon image in extracted files and set as App Icon
+        ICON_PATH=$(find ../temp_unzip -type f \( -iname "icon.png" -o -iname "logo.png" -o -iname "favicon.ico" -o -iname "*.png" \) | head -n 1)
+        if [ -n "$ICON_PATH" ]; then
+          cp "$ICON_PATH" icon.png
+          sed -i '/<\/widget>/i \    <icon src="icon.png" />' config.xml
+        fi
+
+        # Disable HTTPS scheme issue in config.xml
+        sed -i '/<\/widget>/i \    <preference name="AndroidInsecureFileModeEnabled" value="true" />' config.xml
+        sed -i '/<\/widget>/i \    <preference name="scheme" value="http" />' config.xml
+
         cordova platform add android
         cordova build android --no-telemetry
 
