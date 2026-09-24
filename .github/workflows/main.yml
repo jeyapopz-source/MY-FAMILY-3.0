@@ -1,0 +1,18 @@
+name: Unzip Project Files
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  unzip-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Unzip Project Code
+      run: |
+        unzip -o "my family 3..0.zip" -d ./unzipped_code
+        echo "Files successfully unzipped into unzipped_code directory"
