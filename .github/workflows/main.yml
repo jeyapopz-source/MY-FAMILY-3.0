@@ -18,15 +18,26 @@ jobs:
       with:
         node-version: 18
 
-    - name: Unzip Project
+    - name: Unzip Project Files
       run: |
-        unzip -o "my family 3..0.zip" -d ./www
+        mkdir -p ./temp_unzip
+        unzip -o "my family 3..0.zip" -d ./temp_unzip
 
-    - name: Install Cordova and Build APK
+    - name: Install Cordova and Setup App
       run: |
         npm install -g cordova
         cordova create myapp com.myfamily.app MyFamily
-        cp -r www/* myapp/www/
+        rm -rf myapp/www/*
+        
+        # Find index.html inside extracted files and copy all files to cordova www
+        INDEX_PATH=$(find ./temp_unzip -name "index.html" | head -n 1)
+        if [ -n "$INDEX_PATH" ]; then
+          DIR_PATH=$(dirname "$INDEX_PATH")
+          cp -r "$DIR_PATH"/* myapp/www/
+        else
+          cp -r ./temp_unzip/* myapp/www/
+        fi
+
         cd myapp
         cordova platform add android
         cordova build android --no-telemetry
