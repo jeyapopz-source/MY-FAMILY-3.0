@@ -28,19 +28,19 @@ jobs:
         npm install -g cordova
         cordova create myapp com.myfamily.app MyFamily
         rm -rf myapp/www/*
-        
-        # Find index.html inside extracted files and copy all files to cordova www
-        INDEX_PATH=$(find ./temp_unzip -name "index.html" | head -n 1)
-        if [ -n "$INDEX_PATH" ]; then
-          DIR_PATH=$(dirname "$INDEX_PATH")
-          cp -r "$DIR_PATH"/* myapp/www/
+
+        # Find index.html location and copy all contents to www directory
+        INDEX_FILE=$(find ./temp_unzip -name "index.html" -o -name "INDEX.HTML" | head -n 1)
+        if [ -n "$INDEX_FILE" ]; then
+          TARGET_DIR=$(dirname "$INDEX_FILE")
+          cp -r "$TARGET_DIR"/* myapp/www/
         else
           cp -r ./temp_unzip/* myapp/www/
         fi
 
         cd myapp
-        
-        # Look for custom logo/icon image in extracted files and set as App Icon
+
+        # Look for custom icon image and set as App Icon
         ICON_PATH=$(find ../temp_unzip -type f \( -iname "icon.png" -o -iname "logo.png" -o -iname "favicon.ico" -o -iname "*.png" \) | head -n 1)
         if [ -n "$ICON_PATH" ]; then
           cp "$ICON_PATH" icon.png
